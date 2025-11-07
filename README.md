@@ -1,4 +1,4 @@
-# js-utils
+# jstoolkit
 
 > **JavaScript 유틸리티 라이브러리**
 
