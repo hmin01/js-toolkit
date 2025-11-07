@@ -2,12 +2,12 @@ import { describe, expect, test } from "vitest";
 import { ceilTo } from "./ceilTo";
 
 describe("ceilTo", () => {
-  test("rounds to integer by default", () => {
+  test("ceil to integer by default", () => {
     expect(ceilTo(3.14159)).toBe(4);
     expect(ceilTo(3.5)).toBe(4);
     expect(ceilTo(-3.14159)).toBe(-3);
   });
-  test("rounds to specified decimal places", () => {
+  test("ceil to specified decimal places", () => {
     expect(ceilTo(3.14159, 2)).toBe(3.15);
     expect(ceilTo(3.14159, 4)).toBe(3.1416);
     expect(ceilTo(3.14159, 1)).toBe(3.2);
