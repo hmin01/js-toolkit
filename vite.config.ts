@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { glob } from "glob";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -50,4 +51,11 @@ export default defineConfig({
       rollupTypes: true,
     }),
   ],
+  test: {
+    coverage: {
+      provider: "istanbul",
+      include: ["src/**/*.ts"],
+      exclude: ["src/**/index.ts", "src/**/*.spec.ts"],
+    },
+  },
 });
