@@ -1,0 +1,47 @@
+{
+  "name": "js-utils",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest --coverage --typecheck"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./math": "./src/math/index.ts"
+  },
+  "devDependencies": {
+    "@vitest/coverage-istanbul": "4.0.7",
+    "glob": "^11.0.3",
+    "path": "^0.12.7",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^4.0.7"
+  },
+  "description": "js utils",
+  "main": "index.js",
+  "dependencies": {
+    "@types/node": "^24.10.0",
+    "esbuild": "^0.25.12",
+    "fdir": "^6.5.0",
+    "fsevents": "^2.3.3",
+    "nanoid": "^3.3.11",
+    "picocolors": "^1.1.1",
+    "picomatch": "^4.0.3",
+    "postcss": "^8.5.6",
+    "rollup": "^4.52.5",
+    "source-map-js": "^1.2.1",
+    "tinyglobby": "^0.2.15"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "utilities"
+  ],
+  "author": "hmin",
+  "license": "MIT"
+}
