@@ -1,14 +1,21 @@
-export interface DebounceOptions {
+import type { OperationOptions } from "../_types";
+
+export interface DebounceOptions extends OperationOptions {
   /**
    * Specify when to invoke the function
    * - "leading": invoke at the start of the wait period
    * - "trailing": invoke at the end of the wait period
    */
   edges?: Array<"leading" | "trailing">;
-  /** An optional AbortSignal to cancel the debounce */
-  signal?: AbortSignal;
 }
 
+/**
+ * Create a debounced function that delays invoking `func` until after `wait` milliseconds have elapsed
+ * @param func callback function to be debounced
+ * @param wait number of milliseconds to delay invocation
+ * @param options Debounce options
+ * @returns The debounced function
+ */
 export function debounce<TFunc extends (...args: any[]) => void>(func: TFunc, wait: number, { edges = ["trailing"], signal }: DebounceOptions = {}) {
   let _timeoutId: ReturnType<typeof setTimeout> | null = null;
   // Last arguments and context to use when invoking the function

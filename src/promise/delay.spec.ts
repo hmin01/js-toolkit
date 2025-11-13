@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { delay } from "./delay";
 
+/**
+ * [References] es-toolkit/delay
+ * @see https://github.com/toss/es-toolkit/blob/v1.41.0/src/promise/delay.spec.ts
+ */
 describe("delay", () => {
   it("pauses execution for the specified time", async () => {
     const delayMs = 100;

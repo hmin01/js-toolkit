@@ -1,7 +1,4 @@
-export interface DelayOptions {
-  /** An optional AbortSignal to cancel the delay */
-  signal?: AbortSignal;
-}
+import type { OperationOptions } from "../_types";
 
 /**
  * Delays execution for a given number of milliseconds.
@@ -9,7 +6,7 @@ export interface DelayOptions {
  * @param options Delay options
  * @returns A promise that resolves after the specified delay
  */
-export function delay(ms: number, { signal }: DelayOptions = {}): Promise<void> {
+export function delay(ms: number, { signal }: OperationOptions = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     const abortError = new Error("Delay aborted");
 
