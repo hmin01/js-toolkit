@@ -9,7 +9,7 @@ export interface DebounceOptions {
   signal?: AbortSignal;
 }
 
-export function debounce<TFunc extends (...args: any[]) => void>(func: TFunc, wait: number, { edges, signal }: DebounceOptions = {}) {
+export function debounce<TFunc extends (...args: any[]) => void>(func: TFunc, wait: number, { edges = ["trailing"], signal }: DebounceOptions = {}) {
   let _timeoutId: ReturnType<typeof setTimeout> | null = null;
   // Last arguments and context to use when invoking the function
   let _lastArgs: Parameters<TFunc> | null = null;
@@ -26,8 +26,9 @@ export function debounce<TFunc extends (...args: any[]) => void>(func: TFunc, wa
     _lastThis = undefined;
   };
   const _invoke = () => {
-    if (_lastArgs) {
+    if (_lastArgs !== null) {
       func.apply(_lastThis, _lastArgs);
+      _clearVariables();
     }
   };
 
@@ -38,7 +39,6 @@ export function debounce<TFunc extends (...args: any[]) => void>(func: TFunc, wa
 
   const flush = () => {
     _invoke();
-    _clearVariables();
   };
 
   const debounced = function (this: any, ...args: Parameters<TFunc>) {
@@ -47,20 +47,17 @@ export function debounce<TFunc extends (...args: any[]) => void>(func: TFunc, wa
     _lastArgs = args;
     _lastThis = this;
 
-    if (edges?.includes("leading") && _timeoutId === null) {
-      _invoke();
-    }
-    if (edges?.includes("trailing")) {
-      _invoke();
-    }
-
     if (_timeoutId !== null) {
       _clearTimeout();
+    } else if (edges?.includes("leading")) {
+      _invoke();
     }
 
     _timeoutId = setTimeout(() => {
-      _invoke();
-      _clearVariables();
+      if (edges?.includes("trailing")) {
+        _invoke();
+      }
+      cancel();
     }, wait);
   };
 

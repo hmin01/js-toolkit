@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { debounce } from "./debounce";
-// adjust the import path as necessary
 import { delay } from "../promise";
+import { debounce } from "./debounce";
 
 describe("debounce", () => {
-  it("debounces a function call", async () => {
-    const debounceMs = 50;
+  const debounceMs = 100;
+
+  it("debounces function calls", async () => {
     const func = vi.fn();
 
     const debounced = debounce(func, debounceMs);
@@ -13,13 +13,15 @@ describe("debounce", () => {
     debounced();
     debounced();
     debounced();
-    await delay(debounceMs * 2);
+
+    expect(func).not.toHaveBeenCalled();
+
+    await delay(debounceMs + 1);
 
     expect(func).toHaveBeenCalledTimes(1);
   });
 
   it("should delay the function call by the specified wait time", async () => {
-    const debounceMs = 100;
     const func = vi.fn();
 
     const debounced = debounce(func, debounceMs);
@@ -35,7 +37,6 @@ describe("debounce", () => {
   });
 
   it("reset debounce time on each call", async () => {
-    const debounceMs = 50;
     const func = vi.fn();
 
     const debounced = debounce(func, debounceMs);
@@ -54,7 +55,6 @@ describe("debounce", () => {
   });
 
   it("debounced function is called after the wait time", async () => {
-    const debounceMs = 50;
     const func = vi.fn();
 
     const debounced = debounce(func, debounceMs);
@@ -68,7 +68,6 @@ describe("debounce", () => {
   });
 
   it("cancels the debounced function call", async () => {
-    const debounceMs = 50;
     const func = vi.fn();
 
     const debounced = debounce(func, debounceMs);
@@ -81,7 +80,6 @@ describe("debounce", () => {
   });
 
   it("cancels the debounced function call when signal is aborted", async () => {
-    const debounceMs = 50;
     const func = vi.fn();
 
     const controller = new AbortController();
@@ -97,7 +95,6 @@ describe("debounce", () => {
   });
 
   it("flushes the debounced function call", async () => {
-    const debounceMs = 50;
     const func = vi.fn();
 
     const debounced = debounce(func, debounceMs);
@@ -108,20 +105,35 @@ describe("debounce", () => {
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it("edges option works correctly", async () => {
-    const debounceMs = 50;
+  it("edges option works correctly with leading edge", async () => {
     const func = vi.fn();
 
-    const debounced = debounce(func, debounceMs, { edges: ["leading", "trailing"] });
+    const debounced = debounce(func, debounceMs, { edges: ["leading"] });
 
     debounced();
     debounced();
     await delay(debounceMs / 2);
 
-    expect(func).toHaveBeenCalledTimes(3);
+    expect(func).toHaveBeenCalledTimes(1);
 
     await delay(debounceMs / 2 + 1);
 
-    expect(func).toHaveBeenCalledTimes(4);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  it("edges option works correctly ith trailing edge", async () => {
+    const func = vi.fn();
+
+    const debounced = debounce(func, debounceMs, { edges: ["trailing"] });
+
+    debounced();
+    debounced();
+    await delay(debounceMs / 2);
+
+    expect(func).toHaveBeenCalledTimes(0);
+
+    await delay(debounceMs / 2 + 1);
+
+    expect(func).toHaveBeenCalledTimes(1);
   });
 });
