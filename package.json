@@ -1,7 +1,7 @@
 {
   "name": "@hmin/js-toolkit",
   "description": "Lightweight modern JavaScript utility library",
-  "version": "0.0.2",
+  "version": "0.0.2-beta.6",
   "keywords": [
     "javascript",
     "typescript",
@@ -23,40 +23,18 @@
     "test": "vitest run --coverage --typecheck"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./math": "./src/math/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "publishConfig": {
-    "access": "public",
-    "directory": "dist",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "exports": {
-      ".": {
-        "import": {
-          "types": "./index.d.mts",
-          "default": "./index.mjs"
-        },
-        "require": {
-          "types": "./index.d.ts",
-          "default": "./index.cjs"
-        }
-      },
-      "./math": {
-        "import": {
-          "types": "./math/index.d.mts",
-          "default": "./math/index.mjs"
-        },
-        "require": {
-          "types": "./math/index.d.ts",
-          "default": "./math/index.cjs"
-        }
-      }
-    },
-    "types": "./dist/index.d.ts"
+    "access": "public"
   },
   "devDependencies": {
     "@vitest/coverage-istanbul": "4.0.7",
@@ -68,7 +46,6 @@
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.7"
   },
-  "main": "index.js",
   "dependencies": {
     "@types/node": "^24.10.0",
     "esbuild": "^0.25.12",
