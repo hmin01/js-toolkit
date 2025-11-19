@@ -38,7 +38,7 @@ jobs:
       - name: Check if version already published
         id: check_version
         run: |
-          if npm view ${{ github.repository }}@${{ steps.get_version.outputs.version }} version > /dev/null 2>&1; then
+          if npm view @${{ github.repository }}@${{ steps.get_version.outputs.version }} version > /dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
