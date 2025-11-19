@@ -1,24 +1,15 @@
-name: Deploy to npm
+name: Validate publish
 
 on:
-  workflow_dispatch:
-  push:
-    branches: ["master"]
   pull_request:
-    branches: ["master"]
-    types: [closed]
-
-env:
-  DEFAULT_PUBLISH_VERSION_STRATEGY: patch
+    branches: ["feature/*"]
+    types: [opened, synchronize, reopened]
 
 jobs:
-  publish:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
-    name: Publish Package
+  validate:
+    name: Validate publish
     runs-on: ubuntu-latest
-    env:
-      PUBLISH_VERSION_STRATEGY: ${{ vars.PUBLISH_VERSION_STRATEGY || env.DEFAULT_PUBLISH_VERSION_STRATEGY }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    environment: publish
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -79,14 +70,3 @@ jobs:
           git tag -a "v$NEW_VERSION" -m "v$NEW_VERSION"
           git push origin HEAD:master
           git push origin "v$NEW_VERSION"
-
-      - name: Publish to npm
-        env:
-          PUBLISH_DRY_RUN: ${{ vars.PUBLISH_DRY_RUN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ "${{ env.PUBLISH_DRY_RUN }}" = "true" ]; then
-            yarn publish --non-interactive --dry-run
-          else
-            yarn publish --non-interactive
-          fi
