@@ -1,7 +1,7 @@
 /**
  * Fills the decimal part of a number with trailing zeros up to the specified number of decimal places.
  * @param value The number to fill decimal places for.
- * @param decimals The number of decimal places to fill. Defaults to 0.
+ * @param decimals The number of decimal places to fill. Non-negative integer. Defaults to 0.
  * @returns The number as a string with filled decimal places.
  *
  * @example
@@ -12,7 +12,7 @@
  */
 export function fillDecimals(value: number, decimals = 0): string {
   if (!Number.isInteger(decimals)) {
-    throw new Error("The decimals parameter must be an integer.");
+    throw new TypeError("The decimals parameter must be an integer.");
   }
 
   const parts = value.toString().split(".");

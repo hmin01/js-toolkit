@@ -1,0 +1,64 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+    types: [closed]
+
+jobs:
+  deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: publish
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run prepack
+        run: yarn prepack
+
+      - name: Update version and create tag
+        run: |
+          STRATEGY=${{ vars.PUBLISH_VERSION_STRATEGY || 'patch' }}
+
+          if [ "$STRATEGY" = "patch" ]; then
+            yarn version --patch --no-git-tag-version
+          elif [ "$STRATEGY" = "minor" ]; then
+            yarn version --minor --no-git-tag-version
+          elif [ "$STRATEGY" = "major" ]; then
+            yarn version --major --no-git-tag-version
+          else
+            echo "Unknown version strategy: $STRATEGY"
+            exit 1
+          fi
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: Update version (v$NEW_VERSION)"
+          git tag -a "v$NEW_VERSION" -m "v$NEW_VERSION"
+          git push origin HEAD:master
+          git push origin "v$NEW_VERSION"
+
+      - name: Publish package
+        run: yarn publish --access public --non-interactive
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

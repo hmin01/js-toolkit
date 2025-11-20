@@ -7,7 +7,7 @@ import { debounce } from "./debounce";
  * @see https://github.com/toss/es-toolkit/blob/v1.41.0/src/function/debounce.spec.ts
  */
 describe("debounce", () => {
-  const debounceMs = 100;
+  const debounceMs = 10;
 
   it("debounces function calls", async () => {
     const func = vi.fn();
