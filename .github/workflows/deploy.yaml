@@ -59,7 +59,7 @@ jobs:
           git push origin HEAD:${{ github.ref_name }}
 
       - name: Publish package
-        run: npm publish --access public --non-interactive
+        run: npm publish --non-interactive
 
       - name: Create tag
         run: |
