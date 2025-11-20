@@ -5,6 +5,9 @@ on:
     branches: ["master"]
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build
@@ -50,9 +53,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git fetch origin ${{ github.ref_name }}
-          git pull origin ${{ github.ref_name }}
-
+          BRANCH=${{ github.ref_name }}
           git add package.json
           git commit -m "chore: Update version (v$NEW_VERSION)"
-          git push origin ${{ github.ref_name }}
+          git push origin $BRANCH
