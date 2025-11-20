@@ -28,3 +28,31 @@ jobs:
 
       - name: Run prepack
         run: yarn prepack
+
+      - name: Update version
+        run: |
+          STRATEGY=${{ vars.PUBLISH_VERSION_STRATEGY || 'patch' }}
+
+          if [ "$STRATEGY" = "patch" ]; then
+            yarn version --patch --no-git-tag-version
+          elif [ "$STRATEGY" = "minor" ]; then
+            yarn version --minor --no-git-tag-version
+          elif [ "$STRATEGY" = "major" ]; then
+            yarn version --major --no-git-tag-version
+          else
+            echo "Unknown version strategy: $STRATEGY"
+            exit 1
+          fi
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin ${{ GITHUB_REF_NAME }}
+          git pull origin ${{ GITHUB_REF_NAME }}
+
+          git add package.json
+          git commit -m "chore: Update version (v$NEW_VERSION)"
+          git push origin ${{ GITHUB_REF_NAME }}
