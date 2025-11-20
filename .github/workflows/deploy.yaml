@@ -1,13 +1,16 @@
-name: Validate publish
+name: Deploy
 
 on:
+  push:
+    branches: ["master"]
   pull_request:
     branches: ["master"]
-    types: [opened, synchronize, reopened]
+    types: [closed]
 
 jobs:
-  validate:
-    name: Validate publish
+  deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    name: Deploy
     runs-on: ubuntu-latest
     environment: publish
     steps:
@@ -29,25 +32,7 @@ jobs:
       - name: Run prepack
         run: yarn prepack
 
-      - name: Get info from package.json
-        id: get_info
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          PACKAGE_NAME=$(node -p "require('./package.json').name")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
-
-      - name: Check if version already published
-        id: check_version
-        run: |
-          if npm view ${{ steps.get_info.outputs.package_name }}@${{ steps.get_info.outputs.version }} version > /dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Update version if already published
-        if: steps.check_version.outputs.exists == 'true'
+      - name: Update version and create tag
         run: |
           STRATEGY=${{ vars.PUBLISH_VERSION_STRATEGY || 'patch' }}
 
@@ -68,7 +53,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json
-          git commit -m "chore: Update version (v$NEW_VERSION) [skip ci]"
+          git commit -m "chore: Update version (v$NEW_VERSION)"
           git tag -a "v$NEW_VERSION" -m "v$NEW_VERSION"
           git push origin HEAD:master
           git push origin "v$NEW_VERSION"
+
+      - name: Publish package
+        run: yarn publish --access public --non-interactive
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
