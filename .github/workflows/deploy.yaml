@@ -55,7 +55,7 @@ jobs:
           git push origin HEAD:${{ github.ref_name }}
 
       - name: Publish package
-        run: yarn publish --access public --non-interactive
+        run: npm publish --access public --non-interactive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
