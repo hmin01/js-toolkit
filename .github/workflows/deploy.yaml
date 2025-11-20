@@ -50,6 +50,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          git pull origin ${{ github.ref_name }}
+
           git add package.json
           git commit -m "chore: Update version (v$NEW_VERSION)"
           git push origin HEAD:${{ github.ref_name }}
