@@ -35,6 +35,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Update version
+        id: update_version
         run: |
           STRATEGY=${{ vars.PUBLISH_VERSION_STRATEGY || 'patch' }}
 
